@@ -1,10 +1,17 @@
+# App
+
+https://gec-metrics-app.streamlit.app/
+
 # Install
 
 ```sh
-pip install gec-metrics streamlit
-```
+# UV user
+uv sync
 
-# Usage
-```sh
+# Pip user
+pip install -r requirements.txt
+```
+Then,
+```
 streamlit run app.py
 ```
