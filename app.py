@@ -85,7 +85,7 @@ def main():
             st.error(f"Error: {e}")
 
     st.header("Meta-evaluation")
-    meta_id = st.selectbox("", get_meta_eval_ids())
+    meta_id = st.selectbox("", get_meta_eval_ids(), index=get_meta_eval_ids().index('seeda'))
     meta_class = get_meta_eval(meta_id)
     
     st.write("Choose the configurations:")
