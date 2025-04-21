@@ -36,7 +36,7 @@ def main():
     st.info("The llmkobayashi24** metrics are not designed for evaluating a single system and therefore only works for meta-evaluation.")
     
     st.write('Choose a metric:')
-    metric_id = st.selectbox("", get_metric_ids(), index=get_metric_ids.index('green'))
+    metric_id = st.selectbox("", get_metric_ids(), index=get_metric_ids().index('green'))
     if metric_id == 'errant':
         import spacy
         try:
