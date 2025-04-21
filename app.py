@@ -28,14 +28,23 @@ def main():
         subprocess.run([
             'gecmetrics-prepare-meta-eval'
         ])
-    subprocess.run("uv run -m spacy download en_core_web_sm".split(' '))
     st.title("gec-metrics App")
 
-    st.info("Please note that since GPUs are unavailable in this demo, metrics such as IMPARA will run on the CPU. Consequently, some metrics require significant computation time. Additionally, the llmkobayashi24** model is not designed for evaluating a single system and therefore only works for meta-evaluation.")
+    st.info("Since GPUs are unavailable in this demo, neural-based metrics such as IMPARA require significant computation time.")
+    st.info("The SOME metric requires model downloading, so it is not supported in this demo.")
+    st.info("The llmkobayashi24** metrics are not designed for evaluating a single system and therefore only works for meta-evaluation.")
     
     st.write('Choose a metric:')
     metric_id = st.selectbox("", get_metric_ids())
-    metric_class = get_metric(metric_id)
+    if metric_id == 'errant':
+        import spacy
+        try:
+            spacy.load('en_core_web_sm')
+        except:
+            subprocess.run("uv run python -m ensurepip --upgrade".split(' '))
+            subprocess.run("uv run -m spacy download en_core_web_sm".split(' '))
+
+    metric_class = get_metric(metric_id)        
     
     st.write("Choose the configurations:")
     config_values = {}
@@ -89,12 +98,23 @@ def main():
                 else:
                     config_values_meta[field] = st.text_input(f"{field}", value=str(default))
     do_window = st.checkbox("Do window analysis")
+    if meta_id == 'seeda':
+        sys_human_scores = ['ts_sent', 'ts_edit', 'ew_sent', 'ew_edit']
+        sent_human_scores = ['sent', 'edit']
+    elif meta_id == 'gjg':
+        sys_human_scores = ['ts', 'ew']
+        sent_human_scores = ['corr']
     if do_window:
         window_config = {
             'window': st.number_input(f"window:", value=4, step=1),
             'aggregation': st.selectbox('Aggregation method:',['default', 'trueskill']),
+            'human_score': st.selectbox('Huamn score:', sys_human_scores)
         }
     do_pairwise = st.checkbox("Do pairwise analysis")
+    if do_pairwise:
+        pair_config = {
+            'human_score': st.selectbox('Huamn score:', sent_human_scores)
+        }
     if st.button("Meta-evaluate"):
         try:
             if metric is None:
@@ -116,13 +136,14 @@ def main():
 
             if do_window:
                 st.write('Window-analysis results.')
+                human_score = window_config.pop('human_score')
                 window_results = meta.window_analysis_system(metric, **window_config)
-                window_fig = meta.window_analysis_plot(window_results.ts_sent)
+                window_fig = meta.window_analysis_plot(window_results.__dict__[human_score])
                 st.pyplot(window_fig)
             if do_pairwise:
                 st.write('Pairwise-analysis results.')
                 pairwise_results = meta.pairwise_analysis(metric)
-                pairwise_fig = meta.pairwise_analysis_plot(pairwise_results['sent'])
+                pairwise_fig = meta.pairwise_analysis_plot(pairwise_results[pair_config['human_score']])
                 st.pyplot(pairwise_fig)
         except Exception as e:
             st.error(f"Error: {e}")
