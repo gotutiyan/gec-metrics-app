@@ -32,6 +32,7 @@ def main():
 
     st.info("Since GPUs are unavailable in this demo, neural-based metrics such as IMPARA require significant computation time.")
     st.info("The SOME metric requires model downloading, so it is not supported in this demo.")
+    st.info("ERRANT cannot be used because it appears the en_core_web_sm model cannot be downloaded on Streamlit Cloud.")
     st.info("The llmkobayashi24** metrics are not designed for evaluating a single system and therefore only works for meta-evaluation.")
     
     st.write('Choose a metric:')
