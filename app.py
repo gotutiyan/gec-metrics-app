@@ -28,7 +28,10 @@ def main():
         subprocess.run([
             'gecmetrics-prepare-meta-eval'
         ])
+    subprocess.run("uv run -m spacy download en_core_web_sm".split(' '))
     st.title("gec-metrics App")
+
+    st.info("Please note that since GPUs are unavailable in this demo, metrics such as IMPARA will run on the CPU. Consequently, some metrics require significant computation time. Additionally, the llmkobayashi24** model is not designed for evaluating a single system and therefore only works for meta-evaluation.")
     
     st.write('Choose a metric:')
     metric_id = st.selectbox("", get_metric_ids())
