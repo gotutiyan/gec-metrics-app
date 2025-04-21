@@ -1,16 +1,15 @@
 # App
 
+Streamlit Cloud:  
 https://gec-metrics-app.streamlit.app/
 
-# Install
+# Procedure when you set up a local server
 
 ```sh
-# UV user
-uv sync
-
-# Pip user
 pip install -r requirements.txt
+python -m spacy download en_core_web_sm
 ```
+
 Then,
 ```
 streamlit run app.py

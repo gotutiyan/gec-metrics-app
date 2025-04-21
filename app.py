@@ -30,13 +30,27 @@ def main():
         ])
     st.title("gec-metrics App")
 
-    st.info("Since GPUs are unavailable in this demo, neural-based metrics such as IMPARA require significant computation time.")
-    st.info("The SOME metric requires model downloading, so it is not supported in this demo.")
-    st.info("ERRANT cannot be used because it appears the en_core_web_sm model cannot be downloaded on Streamlit Cloud.")
+    st.info("""
+If you are running this demo on the `https://gec-metrics-app.streamlit.app/`, please be aware of the following issues caused by the Streamlit Cloud environment.
+Please ignore this message if you are running it locally.
+
+- ERRANT, PT-ERRANT, and GoToScorer will not work because spaCy's en_core_web_sm model cannot be downloaded in the Cloud environment.
+
+- SOME cannot be used because downloading its pre-trained model weights cannot be executed in the Cloud environment.
+
+- Due to the unavailability of GPUs, neural network-based models will run slowly. This impacts IMPARA, Scribendi, BERTScore, and LLMKobayashi24**.
+
+Consequently, only GREEN and GLEU are expected to operate reliably in the Streamlit Cloud environment.
+            
+            
+For stable operation of the above metrics, it is recommended to set up a local server. The code can be found
+https://github.com/gotutiyan/gec-metrics-app .
+""")
+
     st.info("The llmkobayashi24** metrics are not designed for evaluating a single system and therefore only works for meta-evaluation.")
     
-    st.write('Choose a metric:')
-    metric_id = st.selectbox("", get_metric_ids(), index=get_metric_ids().index('green'))
+    metric_ids = get_metric_ids()
+    metric_id = st.selectbox("Choose a metric:", metric_ids, index=metric_ids.index('green'))
     if metric_id == 'errant':
         import spacy
         try:
